@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .submit-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .score {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+           text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const Quiz = () => {
+            const questions = [
+                {
+                    question: 'What is React?',
+                    options: ['A programming language', 'A JavaScript library for building user interfaces', 'An operating system', 'A database management system'],
+                    correctAnswer: 'A JavaScript library for building user interfaces',
+                },
+                {
+                    question: 'What hook is used to manage state in functional components?',
+                    options: ['useState','useEffect','useReducer', 'useContext'],
+                    correctAnswer: 'useState',
+                },
+                {
+                    question: 'What function is used to render a React component into the DOM?',
+                    options: ['ReactDOM.render()', 'React.render()', 'ReactDOM.createRoot()', 'React.renderDOM()']
+,
+                    correctAnswer: 'H2O',
+                },
+            ];
+
+            const [selectedAnswers, setSelectedAnswers] = React.useState(Array(questions.length).fill(''));
+            const [showScore, setShowScore] = React.useState(false);
+            const [score, setScore] = React.useState(0);
+
+            const handleAnswerSelection = (index, selectedOption) => {
+                const newSelectedAnswers = [...selectedAnswers];
+                newSelectedAnswers[index] = selectedOption;
+                setSelectedAnswers(newSelectedAnswers);
+            };
+
+            const calculateScore = () => {
+                const newScore = questions.reduce((acc, question, index) => {
+                    if (selectedAnswers[index] === question.correctAnswer) {
+                        return acc + 1;
+                    }
+                    return acc;
+                }, 0);
+                setScore(newScore);
+                setShowScore(true);
+            };
+
+            const restartQuiz = () => {
+                setSelectedAnswers(Array(questions.length).fill(''));
+                setShowScore(false);
+                setScore(0);
+            };
+
+            return (
+                <div className="quiz-container">
+                    <h1>Quiz</h1>
+                    {showScore ? (
+                        <div className="score">
+                            <h2>Your Score: {score} / {questions.length}</h2>
+                            <button onClick={restartQuiz}>Restart Quiz</button>
+                        </div>
+                    ) : (
+                        <div>
+                            {questions.map((question, index) => (
+                                <div className="question" key={index}>
+                                    <h3>{question.question}</h3>
+                                    {question.options.map((option, optionIndex) => (
+                                        <div key={optionIndex}>
+                                            <input
+                                                type="radio"
+                                                id={`option_${index}_${optionIndex}`}
+                                                name={`question_${index}`}
+                                                value={option}
+                                                checked={selectedAnswers[index] === option}
+                                                onChange={() => handleAnswerSelection(index, option)}
+                                            />
+                                            <label htmlFor={`option_${index}_${optionIndex}`}>{option}</label>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                            <button className="submit-btn" onClick={calculateScore}>Submit</button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<Quiz />, document.getElementById('root'));
+    </script>
+
+</body>
+
+</html>
